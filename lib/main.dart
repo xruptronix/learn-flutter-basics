@@ -26,13 +26,36 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           child: Container(
-            child: Text('Hello Wolrd'),
+            child: MyButton(),
           ),
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           tooltip: 'Add',
           onPressed: null,
+        ),
+      ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        print('Button has been taped');
+      },
+      child: Container(
+        height: 36,
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.blue[500]
+        ),
+        child: Center(
+          child: Text('Press Me')
         ),
       ),
     );
