@@ -6,7 +6,33 @@ void main(){
   ));
 }
 
-class Counter  extends StatefulWidget {
+class CounterDisplay extends StatelessWidget {
+  
+  CounterDisplay({this.count});
+
+  final int count;
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Count: $count'));;
+  }
+}
+
+class CounterIncreamenter extends StatelessWidget {
+
+  CounterIncreamenter({this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      onPressed: onPressed,
+      child: Text('Increament'),
+    );
+  }
+}
+
+class Counter extends StatefulWidget {
   @override
   _CounterState createState() => _CounterState();
 }
@@ -14,10 +40,10 @@ class Counter  extends StatefulWidget {
 class _CounterState extends State<Counter> {
 
   int _counter = 0;
-
+  
   void _increament(){
     setState(() {
-      _counter++;
+      ++_counter;
     });
   }
 
@@ -25,11 +51,8 @@ class _CounterState extends State<Counter> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        RaisedButton(
-          onPressed: _increament,
-          child: Text('Increament'),
-        ),
-        Text('Counter: $_counter')
+        CounterIncreamenter(onPressed: _increament,),
+        CounterDisplay(count: _counter,)
       ],
     );
   }
