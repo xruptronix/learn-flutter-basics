@@ -1,104 +1,157 @@
 import 'package:flutter/material.dart';
 
-class Product {
-  const Product({this.name});
-  final String name;
+void main(){
+  runApp(MyApp());
 }
 
-typedef void CartChangedCallback(Product product, bool inCart);
-
-void main(){
-  runApp(
-    MaterialApp(
-      title: 'Shopping App',
-      home: ShoppingList(
-        products: <Product> [
-          Product(name: 'Egg'),
-          Product(name: 'Flour'),
-          Product(name: 'Chips'),
-        ],
-      ),
+Widget titleSection = Container(
+    padding: EdgeInsets.all(32),
+    child: Row(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  'Oeschinen Lake Campground',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 8),
+                child: Text(
+                  'Kandersteg, Switzerland',
+                  style: TextStyle(
+                    color: Colors.grey[500]
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        FavoriteWidget(),
+      ],
     ),
+  );
+
+Column _buildButtonColumn(Color color, IconData icon, String label){
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Icon(icon,color: color,),
+      Container(
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: color,
+          ),
+        ),
+      ),
+    ],
   );
 }
 
-class ShoppingListItem extends StatelessWidget {
-  ShoppingListItem({Product product, this.inCart, this.onCartChanged}): product = product,super(key: ObjectKey(product));
+Widget buttonSection = Container(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+    _buildButtonColumn(Colors.blue[300], Icons.call, 'CALL'),
+    _buildButtonColumn(Colors.blue[300], Icons.near_me, 'ROUTE'),
+    _buildButtonColumn(Colors.blue[300], Icons.share, 'SHARE'),
+    ],
+  ),
+);
 
-  final Product product;
-  final bool inCart;
-  final CartChangedCallback onCartChanged;
+Widget textSection = Container(
+  padding: const EdgeInsets.all(32),
+  child: Text(
+    'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+        'Alps. Situated 1,578 meters above sea level, it is one of the '
+        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+        'half-hour walk through pastures and pine forest, leads you to the '
+        'lake, which warms to 20 degrees Celsius in the summer. Activities '
+        'enjoyed here include rowing, and riding the summer toboggan run.',
+    softWrap: true,
+  ),
+);
 
-  Color _getColor(BuildContext context){
-    return inCart ? Colors.black54 : Theme.of(context).primaryColor;
-  }
-
-  TextStyle _getTextStyle(BuildContext context) {
-    if (!inCart) return null;
-
-    return TextStyle(
-      color: Colors.black54,
-      decoration: TextDecoration.lineThrough,
-    );
-  }
-
+class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: (){
-        onCartChanged(product,inCart);
-      },
-      leading: CircleAvatar(
-        backgroundColor: _getColor(context),
-        child: Text(product.name[0]),
-      ),
-      title: Text(product.name,
-        style: _getTextStyle(context)
-      ),
-    );
+    return MaterialApp(
+      title: 'Layout Sample',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Layout Demo'),
+        ),
+        body: ListView(
+          children: <Widget>[
+            Image.asset(
+              'images/lake.jpg',
+              width: 600,
+              height: 240,
+              fit: BoxFit.cover,
+            ),
+            titleSection,
+            buttonSection,
+            textSection,
+          ],
+        ),
+        ),
+      );
+    
   }
 }
 
-class ShoppingList extends StatefulWidget {
-  // final List<Product> products = <Product>[];
-  ShoppingList({Key key, this.products}) : super(key: key);
-  final List<Product> products;
+class FavoriteWidget extends StatefulWidget {
   @override
-  _ShoppingListState createState() => _ShoppingListState();
+  _FavoriteWidgetState createState() => _FavoriteWidgetState();
 }
 
-class _ShoppingListState extends State<ShoppingList> {
+class _FavoriteWidgetState extends State<FavoriteWidget> {
 
-  Set<Product> _shoppingCart = Set<Product>();
+  bool _isFavorited = true;
+  int _favoriteCount = 41;
 
-  void _handleCartChanged(Product product, bool inCart){
-
+  _toggleFavorite(){
     setState(() {
-      if(!inCart){
-        _shoppingCart.add(product);
+      if(_isFavorited == true){
+        _isFavorited = false;
+        _favoriteCount--;
       }else{
-        _shoppingCart.remove(product);
+        _isFavorited = true;
+        _favoriteCount++;
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Shopping List'),
-      ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical:8.0),
-        children: widget.products.map((Product product){
-            return ShoppingListItem(
-              product: product,
-              inCart: _shoppingCart.contains(product),
-              onCartChanged: _handleCartChanged,
-            );
-          }).toList(),
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: EdgeInsets.all(0),
+          child: IconButton(
+            icon: (_isFavorited ? Icon(Icons.star) : Icon(Icons.star_border)),
+            color: Colors.red[500],
+            onPressed: _toggleFavorite,
+          ),
+        ),
+        SizedBox(
+          width: 18,
+          child: Container(
+            child: Text('$_favoriteCount'),
+          ),
+        ),
+      ],
     );
   }
 }
-
